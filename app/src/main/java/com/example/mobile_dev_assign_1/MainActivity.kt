@@ -2,11 +2,14 @@ package com.example.mobile_dev_assign_1
 
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,17 +20,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.example.mobile_dev_assign_1.ui.theme.Mobiledevassign1Theme
 
 class MainActivity : ComponentActivity() {
@@ -55,6 +64,7 @@ fun MenuApp(modifier: Modifier = Modifier) {
             .padding(35.dp)
     ){
         Header(modifier = modifier)
+        Spacer(Modifier.height(25.dp))
         MenuItemsList(modifier = modifier)
         CheckoutSection(modifier = modifier)
     }
@@ -119,6 +129,7 @@ fun OnClearCartClick(){
 fun MenuItemsList(modifier: Modifier = Modifier){
 //    A list of all the menu items
 //    A column looping though the String Array of menu items
+    MenuItem("Bouillabaisse", 42.00, "A traditional Provençal fish stew with saffron broth, shellfish, and Mediterranean herbs", R.drawable.bouillabaisse)
 
 }
 
@@ -127,9 +138,84 @@ fun MenuItem(
     title: String,
     price: Double,
     description: String,
-    imageSrc: String
+    imageSrc: Int
 ){
-    // represents 1 single menu item
+    Row (
+        Modifier
+            .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
+            .fillMaxWidth()
+            .border(
+                BorderStroke(1.dp, Color(0xFF403B34)),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+
+    )
+    {
+        MenuItemInfo(title, price, description)
+        Image(
+            painter = painterResource(id = imageSrc),
+            contentDescription = null,
+            Modifier.width(90.dp)
+        )
+    }
+}
+
+@Composable
+fun MenuItemInfo(
+    title: String,
+    price: Double,
+    description: String
+) {
+    Column (
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(text = "$title - $price\$")
+        Text(
+            text = description,
+            color = Color(0xFF6A8ED1),
+            fontStyle = FontStyle.Italic,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .width(225.dp),
+            lineHeight = 1.5.em
+            )
+
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = {decrementQty() },
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+            ) {
+                Text(text = "—", fontSize = 16.sp, textAlign = TextAlign.Center)
+            }
+
+            Text(text = "0", fontSize = 16.sp, textAlign = TextAlign.Center)
+
+            Button(
+                onClick = {incrementQty() },
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+            ) {
+                Text(text = "+", fontSize = 16.sp, textAlign = TextAlign.Center)
+            }
+        }
+    }
+
+}
+
+fun incrementQty(){
+
+}
+
+fun decrementQty(){
+
 }
 
 @Composable
