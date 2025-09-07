@@ -1,5 +1,6 @@
 package com.example.mobile_dev_assign_1
 
+import android.annotation.SuppressLint
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
 import android.view.Menu
@@ -30,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -151,7 +153,28 @@ fun getMenuItems(): List<MenuItemClass> {
 
     val menuItems =  mutableListOf<MenuItemClass>()
     for (i in 0 until names.size){
-        val item = MenuItemClass(names[i], descriptions[i], prices[i].toDouble(), images[i].toInt())
+        /*
+        * I wanted to save the images for the items in a String array along with the other info
+        * We didn't learn how to transform a string into a drawable, so I did some external research
+        * I used these sources:
+        * https://stackoverflow.com/questions/21856260/how-can-i-convert-string-to-drawable
+        * https://stackoverflow.com/questions/70062705/how-can-i-get-drawable-resource-by-string
+        * */
+
+        /**
+         * looks up resource dynamically with 'getIdentifier(name, defType, packageName)'
+         * I understand that this method is discouraged, but it's the solution I found to store all
+         * the information I need for a menu item in order to be able to add menu items without
+         * changing the code
+         */
+
+        val img = LocalContext.current.resources.getIdentifier(
+            images[i],
+            "drawable",
+            LocalContext.current.packageName
+        )
+
+        val item = MenuItemClass(names[i], descriptions[i], prices[i].toDouble(), img)
 
         menuItems.add(item)
     }
