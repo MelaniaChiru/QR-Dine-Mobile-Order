@@ -263,7 +263,7 @@ fun MenuItemInfo(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                onClick = { onQuantityChange(quantity - 1) },
+                onClick = { if (quantity > 0) onQuantityChange(quantity - 1) },
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
@@ -274,7 +274,7 @@ fun MenuItemInfo(
             Text(text = "$quantity", fontSize = 16.sp, textAlign = TextAlign.Center)
 
             Button(
-                onClick = { onQuantityChange(quantity + 1) },
+                onClick = { if (quantity < 50) onQuantityChange(quantity + 1) },
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
