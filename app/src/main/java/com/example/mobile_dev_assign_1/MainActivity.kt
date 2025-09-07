@@ -1,5 +1,6 @@
 package com.example.mobile_dev_assign_1
 
+import android.R.id.bold
 import android.annotation.SuppressLint
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,14 +69,15 @@ fun MenuApp(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF7FBFE))
+            .background(Color(0xFFF7FBFE))
             .padding(35.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(25.dp)
 
     ){
         Header(modifier = modifier)
-        Spacer(Modifier.height(25.dp))
         MenuItemsList(modifier = modifier)
-        CheckoutSection(modifier = modifier)
+        CheckoutSection(total = 100.00, modifier = modifier)
     }
 }
 
@@ -283,10 +286,34 @@ fun decrementQty(){
 }
 
 @Composable
-fun CheckoutSection(modifier: Modifier = Modifier){
-//    Display total and taxes
-//    Have place order button
-//    eventually show QR code when button is clicked
+fun CheckoutSection(total: Double, modifier: Modifier = Modifier){
+    val gst = total * 0.05;
+    val qst = total * 0.09975;
+    val totalWithTax = total + gst + qst
+
+    Column (
+        verticalArrangement = Arrangement.spacedBy(25.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Column {
+            Text(text = "Total: $" + "%.2f".format(total), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text("GST(5%): $" + "%.2f".format(gst))
+            Text("QST(9.975%): $" + "%.2f".format(qst))
+            Text("Total (Tax Included): $" + "%.2f".format(totalWithTax), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Button(
+            onClick = {placeOrder() },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = "Place Order",textAlign = TextAlign.Center)
+        }
+    }
+
+}
+
+fun placeOrder(){
 
 }
 
