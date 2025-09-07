@@ -234,7 +234,8 @@ fun MenuItemInfo(
     Column (
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "$name - $price\$")
+        val formattedPrice = "%.2f".format(price)
+        Text(text = "$name - $formattedPrice$")
         Text(
             text = description,
             color = Color(0xFF6A8ED1),
