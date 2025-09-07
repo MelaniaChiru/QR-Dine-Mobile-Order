@@ -2,6 +2,7 @@ package com.example.mobile_dev_assign_1
 
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -127,22 +129,47 @@ fun OnClearCartClick(){
 
 @Composable
 fun MenuItemsList(modifier: Modifier = Modifier){
-//    A list of all the menu items
-//    A column looping though the String Array of menu items
-    MenuItem("Bouillabaisse", 42.00, "A traditional Provençal fish stew with saffron broth, shellfish, and Mediterranean herbs", R.drawable.bouillabaisse)
+    val items = getMenuItems()
+    Column {
+        items.forEach { item ->
+            MenuItem(
+                name = item.name,
+                price = item.price,
+                description = item.description,
+                imageSrc = item.image
+            )
+        }
+    }
+}
+
+@Composable
+fun getMenuItems(): List<MenuItemClass> {
+    val names = stringArrayResource(R.array.menu_names)
+    val descriptions = stringArrayResource(R.array.menu_descriptions)
+    val prices = stringArrayResource(R.array.menu_prices)
+    val images = stringArrayResource(R.array.menu_images)
+
+    val menuItems =  mutableListOf<MenuItemClass>()
+    for (i in 0 until names.size){
+        val item = MenuItemClass(names[i], descriptions[i], prices[i].toDouble(), images[i].toInt())
+
+        menuItems.add(item)
+    }
+
+    return menuItems
 
 }
 
-data class MenuItem (
+data class MenuItemClass (
     val name: String,
     val description: String,
     val price: Double,
-    var image: String
+    var image: Int
 )
 
 @Composable
 fun MenuItem(
-    title: String,
+    name: String,
     price: Double,
     description: String,
     imageSrc: Int
@@ -160,7 +187,7 @@ fun MenuItem(
 
     )
     {
-        MenuItemInfo(title, price, description)
+        MenuItemInfo(name, price, description)
         Image(
             painter = painterResource(id = imageSrc),
             contentDescription = null,
@@ -171,14 +198,14 @@ fun MenuItem(
 
 @Composable
 fun MenuItemInfo(
-    title: String,
+    name: String,
     price: Double,
     description: String
 ) {
     Column (
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "$title - $price\$")
+        Text(text = "$name - $price\$")
         Text(
             text = description,
             color = Color(0xFF6A8ED1),
