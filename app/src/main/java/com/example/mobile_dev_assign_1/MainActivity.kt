@@ -133,6 +133,13 @@ fun MenuItemsList(modifier: Modifier = Modifier){
 
 }
 
+data class MenuItem (
+    val name: String,
+    val description: String,
+    val price: Double,
+    var image: String
+)
+
 @Composable
 fun MenuItem(
     title: String,
