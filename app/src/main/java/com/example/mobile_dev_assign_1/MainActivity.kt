@@ -31,6 +31,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -196,7 +201,8 @@ data class MenuItemClass (
     val name: String,
     val description: String,
     val price: Double,
-    var image: Int
+    val image: Int,
+    var quantity: Int = 0
 )
 
 @Composable
@@ -206,6 +212,7 @@ fun MenuItem(
     description: String,
     imageSrc: Int
 ){
+    var quantity by remember { mutableIntStateOf(0) }
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -219,7 +226,7 @@ fun MenuItem(
 
     )
     {
-        MenuItemInfo(name, price, description)
+        MenuItemInfo(name, price, description, quantity) {newQuantity: Int -> quantity = newQuantity}
         Image(
             painter = painterResource(id = imageSrc),
             contentDescription = null,
@@ -232,7 +239,9 @@ fun MenuItem(
 fun MenuItemInfo(
     name: String,
     price: Double,
-    description: String
+    description: String,
+    quantity: Int,
+    onQuantityChange: (Int) -> Unit
 ) {
     Column (
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -254,7 +263,7 @@ fun MenuItemInfo(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                onClick = {decrementQty() },
+                onClick = { onQuantityChange(quantity - 1) },
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
@@ -262,10 +271,10 @@ fun MenuItemInfo(
                 Text(text = "—", fontSize = 16.sp, textAlign = TextAlign.Center)
             }
 
-            Text(text = "0", fontSize = 16.sp, textAlign = TextAlign.Center)
+            Text(text = "$quantity", fontSize = 16.sp, textAlign = TextAlign.Center)
 
             Button(
-                onClick = {incrementQty() },
+                onClick = { onQuantityChange(quantity + 1) },
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
@@ -274,14 +283,6 @@ fun MenuItemInfo(
             }
         }
     }
-
-}
-
-fun incrementQty(){
-
-}
-
-fun decrementQty(){
 
 }
 
