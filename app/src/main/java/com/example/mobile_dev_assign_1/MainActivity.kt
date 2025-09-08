@@ -1,5 +1,6 @@
 package com.example.mobile_dev_assign_1
 
+import com.example.mobile_dev_assign_1.MenuItem
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -64,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
-    val initialMenuItemsList by remember {mutableStateOf(listOf<MenuItemClass>())}
+    val initialMenuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
     val totalQty by remember { mutableIntStateOf(0) };
     val subTotal by remember { mutableDoubleStateOf(0.00) };
 
@@ -140,7 +141,7 @@ fun onClearCartClick(){
 
 
 @Composable
-fun MenuItemsList(items: List<MenuItemClass>, modifier: Modifier = Modifier){
+fun MenuItemsList(items: List<MenuItem>, modifier: Modifier = Modifier){
     Column (
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -156,13 +157,13 @@ fun MenuItemsList(items: List<MenuItemClass>, modifier: Modifier = Modifier){
 }
 
 @Composable
-fun getMenuItems(): List<MenuItemClass> {
+fun getMenuItems(): List<MenuItem> {
     val names = stringArrayResource(R.array.menu_names)
     val descriptions = stringArrayResource(R.array.menu_descriptions)
     val prices = stringArrayResource(R.array.menu_prices)
     val images = stringArrayResource(R.array.menu_images)
 
-    val menuItems =  mutableListOf<MenuItemClass>()
+    val menuItems =  mutableListOf<MenuItem>()
     for (i in 0 until names.size){
         /*
         * I wanted to save the images for the items in a String array along with the other info
@@ -185,7 +186,7 @@ fun getMenuItems(): List<MenuItemClass> {
             LocalContext.current.packageName
         )
 
-        val item = MenuItemClass(names[i], descriptions[i], prices[i].toDouble(), img)
+        val item = MenuItem(names[i], descriptions[i], prices[i].toDouble(), img)
 
         menuItems.add(item)
     }
@@ -193,14 +194,6 @@ fun getMenuItems(): List<MenuItemClass> {
     return menuItems
 
 }
-
-data class MenuItemClass (
-    val name: String,
-    val description: String,
-    val price: Double,
-    val image: Int,
-    var quantity: Int = 0
-)
 
 @Composable
 fun MenuItem(
