@@ -26,7 +26,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +64,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
+    val initialMenuItemsList by remember {mutableStateOf(listOf<MenuItemClass>())}
+    val totalQty by remember { mutableIntStateOf(0) };
+    val subTotal by remember { mutableDoubleStateOf(0.00) };
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -71,14 +78,14 @@ fun MenuApp(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(25.dp)
 
     ){
-        Header(modifier = modifier)
-        MenuItemsList(modifier = modifier)
-        CheckoutSection(total = 100.00, modifier = modifier)
+        Header(totalQty = totalQty, modifier = modifier)
+        MenuItemsList(items = initialMenuItemsList, modifier = modifier)
+        CheckoutSection(total = subTotal, modifier = modifier)
     }
 }
 
 @Composable
-fun Header(modifier: Modifier = Modifier){
+fun Header(totalQty: Int,modifier: Modifier = Modifier){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,7 +109,7 @@ fun Header(modifier: Modifier = Modifier){
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Nº items: 0"
+                    text = "Nº items: $totalQty"
                 )
 
                 Spacer(
@@ -133,8 +140,7 @@ fun onClearCartClick(){
 
 
 @Composable
-fun MenuItemsList(modifier: Modifier = Modifier){
-    val items = getMenuItems()
+fun MenuItemsList(items: List<MenuItemClass>, modifier: Modifier = Modifier){
     Column (
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
