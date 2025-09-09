@@ -67,15 +67,19 @@ class MainActivity : ComponentActivity() {
 fun MenuApp(modifier: Modifier = Modifier) {
     var menuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
 
-    menuItemsList = getMenuItems()
+    val fetchedMenuItems = getMenuItems()
+
+    fetchedMenuItems.forEach { item ->
+        menuItemsList.add(item)
+    }
 
     var totalQty by remember { mutableIntStateOf(0) };
 
     var subTotal by remember { mutableDoubleStateOf(0.00) };
 
     for (item in menuItemsList){
-        totalQty =+ item.quantity
-        subTotal =+ item.quantity * item.price
+        totalQty += item.quantity
+        subTotal += item.quantity * item.price
     }
 
     Column (
@@ -96,7 +100,12 @@ fun MenuApp(modifier: Modifier = Modifier) {
                 }
             },
             modifier = modifier)
-        MenuItemsList(items = menuItemsList, modifier = modifier)
+        MenuItemsList(
+            items = menuItemsList,
+            onQuantityChange = { index, newQty ->
+                menuItemsList[index].quantity = newQty
+            },
+            modifier = modifier)
         CheckoutSection(total = subTotal, modifier = modifier)
     }
 }
@@ -153,12 +162,12 @@ fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () ->
 
 
 @Composable
-fun MenuItemsList(items: List<MenuItem>, modifier: Modifier = Modifier){
+fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty: Int) -> Unit, modifier: Modifier = Modifier){
     Column (
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items.forEach { item ->
-            MenuItemContainer(item = item)
+            MenuItemContainer(item = item, onQuantityChange = { newQty -> onQuantityChange(items.indexOf(item), newQty) })
         }
     }
 }
@@ -203,7 +212,7 @@ fun getMenuItems(): List<MenuItem> {
 }
 
 @Composable
-fun MenuItemContainer(item: MenuItem, modifier: Modifier = Modifier){
+fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit = {}, modifier: Modifier = Modifier){
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -217,7 +226,7 @@ fun MenuItemContainer(item: MenuItem, modifier: Modifier = Modifier){
 
     )
     {
-        MenuItemInfo(item.name, item.price, item.description, item.quantity) {newQuantity: Int -> item.quantity = newQuantity}
+        MenuItemInfo(item.name, item.price, item.description, item.quantity, onQuantityChange)
         Image(
             painter = painterResource(id = item.image),
             contentDescription = null,
