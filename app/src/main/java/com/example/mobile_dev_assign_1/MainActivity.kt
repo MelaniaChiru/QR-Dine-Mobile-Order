@@ -65,17 +65,30 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
-    var menuItemsList by remember { mutableStateOf(mutableListOf<MenuItem>()) }
+    val names = stringArrayResource(R.array.menu_names)
+    val descriptions = stringArrayResource(R.array.menu_descriptions)
+    val prices = stringArrayResource(R.array.menu_prices)
+    val images = stringArrayResource(R.array.menu_images)
 
+    val menuItemsList = remember { mutableStateListOf<MenuItem>() }
 
-    val fetchedMenuItems = getMenuItems()
-
-    fetchedMenuItems.forEach { item ->
-        menuItemsList.add(item)
+    if (menuItemsList.isEmpty()) {
+        for (i in 0 until names.size){
+            /*
+            * I wanted to save the images for the items in a String array along with the other info
+            * We didn't learn how to transform a string into a drawable, so I did some external research
+            * I used these sources:
+            * https://stackoverflow.com/questions/21856260/how-can-i-convert-string-to-drawable
+            * https://stackoverflow.com/questions/70062705/how-can-i-get-drawable-resource-by-string
+            * */
+            val img = LocalContext.current.resources.getIdentifier(
+                images[i], "drawable", LocalContext.current.packageName
+            )
+            menuItemsList.add(MenuItem(names[i], descriptions[i], prices[i].toDouble(), img))
+        }
     }
-
-    var totalQty by remember { mutableIntStateOf(0) };
-    var subTotal by remember { mutableDoubleStateOf(0.00) };
+    var totalQty by remember { mutableIntStateOf(0) }
+    var subTotal by remember { mutableDoubleStateOf(0.00) }
 
     fun updateTotals() {
         totalQty = 0
@@ -181,45 +194,6 @@ fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty:
             })
         }
     }
-}
-
-@Composable
-fun getMenuItems(): List<MenuItem> {
-    val names = stringArrayResource(R.array.menu_names)
-    val descriptions = stringArrayResource(R.array.menu_descriptions)
-    val prices = stringArrayResource(R.array.menu_prices)
-    val images = stringArrayResource(R.array.menu_images)
-
-    val menuItems =  mutableListOf<MenuItem>()
-    for (i in 0 until names.size){
-        /*
-        * I wanted to save the images for the items in a String array along with the other info
-        * We didn't learn how to transform a string into a drawable, so I did some external research
-        * I used these sources:
-        * https://stackoverflow.com/questions/21856260/how-can-i-convert-string-to-drawable
-        * https://stackoverflow.com/questions/70062705/how-can-i-get-drawable-resource-by-string
-        * */
-
-        /**
-         * looks up resource dynamically with 'getIdentifier(name, defType, packageName)'
-         * I understand that this method is discouraged, but it's the solution I found to store all
-         * the information I need for a menu item in order to be able to add menu items without
-         * changing the code
-         */
-
-        val img = LocalContext.current.resources.getIdentifier(
-            images[i],
-            "drawable",
-            LocalContext.current.packageName
-        )
-
-        val item = MenuItem(names[i], descriptions[i], prices[i].toDouble(), img)
-
-        menuItems.add(item)
-    }
-
-    return menuItems
-
 }
 
 @Composable
