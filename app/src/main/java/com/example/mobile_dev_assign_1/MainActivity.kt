@@ -65,9 +65,18 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
-    val initialMenuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
-    val totalQty by remember { mutableIntStateOf(0) };
-    val subTotal by remember { mutableDoubleStateOf(0.00) };
+    var initialMenuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
+
+    initialMenuItemsList = getMenuItems()
+
+    var totalQty by remember { mutableIntStateOf(0) };
+
+    var subTotal by remember { mutableDoubleStateOf(0.00) };
+
+    for (item in initialMenuItemsList){
+        totalQty =+ item.quantity
+        subTotal =+ item.quantity * item.price
+    }
 
     Column (
         modifier = Modifier
