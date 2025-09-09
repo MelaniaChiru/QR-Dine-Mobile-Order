@@ -198,7 +198,6 @@ fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty:
 
 @Composable
 fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit, modifier: Modifier = Modifier){
-    var quantity by remember { mutableStateOf(item.quantity.value) }
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -212,8 +211,7 @@ fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit, modifier:
 
     )
     {
-        MenuItemInfo(item.name, item.price, item.description, quantity, onQuantityChange = {
-            quantity = it
+        MenuItemInfo(item.name, item.price, item.description, item.quantity.value, onQuantityChange = {
             item.quantity.value = it
             onQuantityChange(it)
         })
