@@ -1,5 +1,6 @@
 package com.example.mobile_dev_assign_1
 
+import android.graphics.Bitmap
 import com.example.mobile_dev_assign_1.MenuItem
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
@@ -47,6 +48,10 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.mobile_dev_assign_1.ui.theme.Mobiledevassign1Theme
 import com.google.gson.Gson
+import com.google.zxing.BarcodeFormat
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import androidx.compose.ui.graphics.asImageBitmap
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -281,6 +286,8 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
     val qst = total * 0.09975
     val totalWithTax = total + gst + qst
 
+    var qrCodeBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
     Column (
         verticalArrangement = Arrangement.spacedBy(25.dp),
         modifier = Modifier
@@ -291,10 +298,20 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
             Text("GST(5%): $" + "%.2f".format(gst))
             Text("QST(9.975%): $" + "%.2f".format(qst))
             Text("Total (Tax Included): $" + "%.2f".format(totalWithTax), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
+            if (qrCodeBitmap != null)
+            {
+                Image(qrCodeBitmap!!.asImageBitmap(), contentDescription = null)
+            }
+
         }
 
         Button(
-            onClick = { val jsonOrder = placeOrder(menuItemsList) },
+            onClick =
+                {
+                    val jsonOrder = placeOrder(menuItemsList)
+                    qrCodeBitmap = generateQRCode(jsonOrder, 512, 512)
+                },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = "Place Order",textAlign = TextAlign.Center)
@@ -309,6 +326,17 @@ fun placeOrder(menuItems: List<MenuItem>): String
     val jsonString = gson.toJson(menuItems)
     return jsonString
 }
+
+fun generateQRCode(inputStr: String, codeWidth: Int, codeHeight: Int): Bitmap? {
+    try{
+        val barcodeEncoder = BarcodeEncoder()
+        return barcodeEncoder.encodeBitmap(inputStr, BarcodeFormat.QR_CODE, codeWidth, codeHeight)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
+}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
