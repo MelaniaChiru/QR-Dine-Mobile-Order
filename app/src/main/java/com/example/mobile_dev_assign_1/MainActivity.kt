@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
 fun MenuApp(modifier: Modifier = Modifier) {
     var menuItemsList by remember { mutableStateOf(mutableListOf<MenuItem>()) }
 
+
     val fetchedMenuItems = getMenuItems()
 
     fetchedMenuItems.forEach { item ->
@@ -74,7 +75,6 @@ fun MenuApp(modifier: Modifier = Modifier) {
     }
 
     var totalQty by remember { mutableIntStateOf(0) };
-
     var subTotal by remember { mutableDoubleStateOf(0.00) };
 
     for (item in menuItemsList){
@@ -167,7 +167,7 @@ fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty:
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items.forEach { item ->
-            MenuItemContainer(item = item, onQuantityChange = { newQty -> onQuantityChange(items.indexOf(item), newQty) })
+            MenuItemContainer(item = item)
         }
     }
 }
@@ -212,7 +212,8 @@ fun getMenuItems(): List<MenuItem> {
 }
 
 @Composable
-fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit = {}, modifier: Modifier = Modifier){
+fun MenuItemContainer(item: MenuItem, modifier: Modifier = Modifier){
+    var quantity by remember { mutableStateOf(item.quantity) }
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -226,7 +227,10 @@ fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit = {}, modi
 
     )
     {
-        MenuItemInfo(item.name, item.price, item.description, item.quantity, onQuantityChange)
+        MenuItemInfo(item.name, item.price, item.description, quantity, onQuantityChange = { newQuantity ->
+            quantity = newQuantity
+            item.quantity = quantity
+        })
         Image(
             painter = painterResource(id = item.image),
             contentDescription = null,
