@@ -65,15 +65,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
-    var initialMenuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
+    var menuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
 
-    initialMenuItemsList = getMenuItems()
+    menuItemsList = getMenuItems()
 
     var totalQty by remember { mutableIntStateOf(0) };
 
     var subTotal by remember { mutableDoubleStateOf(0.00) };
 
-    for (item in initialMenuItemsList){
+    for (item in menuItemsList){
         totalQty =+ item.quantity
         subTotal =+ item.quantity * item.price
     }
@@ -88,14 +88,21 @@ fun MenuApp(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(25.dp)
 
     ){
-        Header(totalQty = totalQty, modifier = modifier)
-        MenuItemsList(items = initialMenuItemsList, modifier = modifier)
+        Header(
+            totalQty = totalQty,
+            onClearCartClick = {
+                for (item in menuItemsList){
+                    item.quantity = 0
+                }
+            },
+            modifier = modifier)
+        MenuItemsList(items = menuItemsList, modifier = modifier)
         CheckoutSection(total = subTotal, modifier = modifier)
     }
 }
 
 @Composable
-fun Header(totalQty: Int,modifier: Modifier = Modifier){
+fun Header(totalQty: Int, onClearCartClick: () -> Unit = {}, modifier: Modifier = Modifier){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,10 +148,6 @@ fun Header(totalQty: Int,modifier: Modifier = Modifier){
 
         )
     }
-}
-
-fun onClearCartClick(){
-//    TODO: Reset cart and total price
 }
 
 
