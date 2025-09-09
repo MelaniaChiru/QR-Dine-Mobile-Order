@@ -102,7 +102,7 @@ fun MenuApp(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Header(totalQty: Int, onClearCartClick: () -> Unit = {}, modifier: Modifier = Modifier){
+fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () -> Unit = {}){
     Column(
         modifier = Modifier
             .fillMaxWidth()
