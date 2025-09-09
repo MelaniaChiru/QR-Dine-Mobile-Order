@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
-    var menuItemsList by remember {mutableStateOf(listOf<MenuItem>())}
+    var menuItemsList by remember { mutableStateOf(mutableListOf<MenuItem>()) }
 
     val fetchedMenuItems = getMenuItems()
 
