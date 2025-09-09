@@ -77,9 +77,13 @@ fun MenuApp(modifier: Modifier = Modifier) {
     var totalQty by remember { mutableIntStateOf(0) };
     var subTotal by remember { mutableDoubleStateOf(0.00) };
 
-    for (item in menuItemsList){
-        totalQty += item.quantity
-        subTotal += item.quantity * item.price
+    fun updateTotals() {
+        totalQty = 0
+        subTotal = 0.0
+        for (item in menuItemsList) {
+            totalQty += item.quantity.value
+            subTotal += item.quantity.value * item.price
+        }
     }
 
     Column (
@@ -95,17 +99,22 @@ fun MenuApp(modifier: Modifier = Modifier) {
         Header(
             totalQty = totalQty,
             onClearCartClick = {
-                for (item in menuItemsList){
-                    item.quantity = 0
+                // Clear all quantities
+                for (item in menuItemsList) {
+                    item.quantity.value = 0
                 }
+                updateTotals()
             },
-            modifier = modifier)
+            modifier = modifier
+        )
         MenuItemsList(
             items = menuItemsList,
             onQuantityChange = { index, newQty ->
-                menuItemsList[index].quantity = newQty
+                menuItemsList[index].quantity.value = newQty
+                updateTotals()
             },
-            modifier = modifier)
+            modifier = modifier
+        )
         CheckoutSection(total = subTotal, modifier = modifier)
     }
 }
@@ -166,8 +175,10 @@ fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty:
     Column (
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items.forEach { item ->
-            MenuItemContainer(item = item)
+        for (i in items.indices) {
+            MenuItemContainer(item = items[i], onQuantityChange = { newQty ->
+                onQuantityChange(i, newQty)
+            })
         }
     }
 }
@@ -212,8 +223,8 @@ fun getMenuItems(): List<MenuItem> {
 }
 
 @Composable
-fun MenuItemContainer(item: MenuItem, modifier: Modifier = Modifier){
-    var quantity by remember { mutableStateOf(item.quantity) }
+fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit, modifier: Modifier = Modifier){
+    var quantity by remember { mutableStateOf(item.quantity.value) }
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -227,9 +238,10 @@ fun MenuItemContainer(item: MenuItem, modifier: Modifier = Modifier){
 
     )
     {
-        MenuItemInfo(item.name, item.price, item.description, quantity, onQuantityChange = { newQuantity ->
-            quantity = newQuantity
-            item.quantity = quantity
+        MenuItemInfo(item.name, item.price, item.description, quantity, onQuantityChange = {
+            quantity = it
+            item.quantity.value = it
+            onQuantityChange(it)
         })
         Image(
             painter = painterResource(id = item.image),
