@@ -309,7 +309,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
         Button(
             onClick =
                 {
-                    val jsonOrder = placeOrder(menuItemsList)
+                    val jsonOrder = transformToJsonFormat(menuItemsList)
                     qrCodeBitmap = generateQRCode(jsonOrder, 512, 512)
                 },
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -320,10 +320,15 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
 
 }
 
-fun placeOrder(menuItems: List<MenuItem>): String
+fun transformToJsonFormat(menuItems: List<MenuItem>): String
 {
     val gson = Gson()
-    val jsonString = gson.toJson(menuItems)
+    var orderItemsList = mutableListOf<OrderItem>()
+
+    menuItems.forEach { item ->
+        orderItemsList.add(OrderItem(item.name, item.description, item.price, item.quantity.value))
+    }
+    val jsonString = gson.toJson(orderItemsList)
     return jsonString
 }
 
