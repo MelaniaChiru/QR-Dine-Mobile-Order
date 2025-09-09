@@ -158,12 +158,7 @@ fun MenuItemsList(items: List<MenuItem>, modifier: Modifier = Modifier){
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items.forEach { item ->
-            MenuItem(
-                name = item.name,
-                price = item.price,
-                description = item.description,
-                imageSrc = item.image
-            )
+            MenuItemContainer(item = item)
         }
     }
 }
@@ -208,13 +203,7 @@ fun getMenuItems(): List<MenuItem> {
 }
 
 @Composable
-fun MenuItem(
-    name: String,
-    price: Double,
-    description: String,
-    imageSrc: Int
-){
-    var quantity by remember { mutableIntStateOf(0) }
+fun MenuItemContainer(item: MenuItem, modifier: Modifier = Modifier){
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -228,9 +217,9 @@ fun MenuItem(
 
     )
     {
-        MenuItemInfo(name, price, description, quantity) {newQuantity: Int -> quantity = newQuantity}
+        MenuItemInfo(item.name, item.price, item.description, item.quantity) {newQuantity: Int -> item.quantity = newQuantity}
         Image(
-            painter = painterResource(id = imageSrc),
+            painter = painterResource(id = item.image),
             contentDescription = null,
             Modifier.width(90.dp)
         )
