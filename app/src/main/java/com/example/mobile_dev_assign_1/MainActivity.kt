@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.mobile_dev_assign_1.ui.theme.Mobiledevassign1Theme
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,7 +129,7 @@ fun MenuApp(modifier: Modifier = Modifier) {
             },
             modifier = modifier
         )
-        CheckoutSection(total = subTotal, modifier = modifier)
+        CheckoutSection(menuItemsList = menuItemsList, total = subTotal, modifier = modifier)
     }
 }
 
@@ -275,7 +276,7 @@ fun MenuItemInfo(
 }
 
 @Composable
-fun CheckoutSection(total: Double, modifier: Modifier = Modifier){
+fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modifier = Modifier){
     val gst = total * 0.05
     val qst = total * 0.09975
     val totalWithTax = total + gst + qst
@@ -293,7 +294,7 @@ fun CheckoutSection(total: Double, modifier: Modifier = Modifier){
         }
 
         Button(
-            onClick = {placeOrder() },
+            onClick = { val jsonOrder = placeOrder(menuItemsList) },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = "Place Order",textAlign = TextAlign.Center)
@@ -302,8 +303,11 @@ fun CheckoutSection(total: Double, modifier: Modifier = Modifier){
 
 }
 
-fun placeOrder(){
-
+fun placeOrder(menuItems: List<MenuItem>): String
+{
+    val gson = Gson()
+    val jsonString = gson.toJson(menuItems)
+    return jsonString
 }
 
 @Preview(showBackground = true, showSystemUi = true)
