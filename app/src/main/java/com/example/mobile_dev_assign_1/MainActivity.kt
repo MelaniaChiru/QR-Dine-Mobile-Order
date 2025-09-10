@@ -269,7 +269,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
         }
 
-        if (qrCodeBitmap != null && orderIsEmpty) DisplayOrderWarningMessage()
+        if (qrCodeBitmap == null && orderIsEmpty) DisplayOrderWarningMessage()
         if (qrCodeBitmap != null && !orderIsEmpty) DisplayQrCode(qrCodeBitmap)
     }
 }
@@ -314,6 +314,9 @@ fun transformToJsonFormat(menuItems: List<MenuItem>): String
 {
     val gson = Gson()
     var orderItemsList = mutableListOf<OrderItem>()
+    val orderIsEmpty = isOrderEmpty(menuItems)
+
+    if (orderIsEmpty) return ""
 
     menuItems.forEach { item ->
         if (item.quantity.value > 0)
