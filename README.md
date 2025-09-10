@@ -40,11 +40,13 @@ Both these features use the state of the menuItemsList and the qrCodeBitmap
 
 ### Composable functions vs. regular functions
 * For the most part, my functions are composables
-* In situations where the function does some sort of logical operation and does not display anything to the screen, then it's a regular function
-* I also have a nested function (updateTotals()). Even tough we haven't seen this concept in this class, we've learnt it in other classes, so I assumed it was ok to use it.
-  * I didn't make that function an external function, just because it's very small, and uses variables declared within it's parent function. 
+* In situations where the function does some sort of logical operation and does not display anything to the screen (or need to call a composable), then it's a regular function
 
-
+### QR Code
+* When the app is initially started, the QR code is not displayed, instead there is a message stating that the cart is empty.
+* Once the user increments the quantity of an item, the message disappears, but they still have to click the 'place order' button for the QR code to show up.
+* If a QR code is displayed, and the users clears their cart, the QR code disappears.
+* If a users clicks on 'place order', but they have not added any items to their cart, the QR code is not displayed and the warning message appears.
 
 ## External Code and Images Attributions
 
