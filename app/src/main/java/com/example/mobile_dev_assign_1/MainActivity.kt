@@ -300,16 +300,6 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             Text(stringResource(R.string.gst_5) + "%.2f".format(gst))
             Text(stringResource(R.string.qst_9_975) + "%.2f".format(qst))
             Text(stringResource(R.string.total_tax_included) + "%.2f".format(totalWithTax), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-
-            if (qrCodeBitmap != null)
-            {
-                Image(
-                    qrCodeBitmap!!.asImageBitmap(),
-                    contentDescription = null ,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-
         }
 
         Button(
@@ -321,6 +311,15 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
+        }
+
+        if (qrCodeBitmap != null)
+        {
+            Image(
+                qrCodeBitmap!!.asImageBitmap(),
+                contentDescription = null ,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
     }
 
