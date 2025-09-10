@@ -130,10 +130,9 @@ fun MenuApp(modifier: Modifier = Modifier) {
             onQuantityChange = { index, newQty ->
                 menuItemsList[index].quantity.value = newQty
                 updateTotals()
-            },
-            modifier = modifier
+            }
         )
-        CheckoutSection(menuItemsList = menuItemsList, total = subTotal, modifier = modifier)
+        CheckoutSection(menuItemsList = menuItemsList, total = subTotal)
     }
 }
 
@@ -189,7 +188,7 @@ fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () ->
 
 
 @Composable
-fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty: Int) -> Unit, modifier: Modifier = Modifier){
+fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty: Int) -> Unit){
     Column (
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -202,7 +201,7 @@ fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty:
 }
 
 @Composable
-fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit, modifier: Modifier = Modifier){
+fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit){
     Row (
         Modifier
             .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
@@ -281,7 +280,7 @@ fun MenuItemInfo(
 }
 
 @Composable
-fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modifier = Modifier){
+fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
     val gst = total * 0.05
     val qst = total * 0.09975
     val totalWithTax = total + gst + qst
