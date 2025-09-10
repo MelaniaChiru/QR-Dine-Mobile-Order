@@ -80,13 +80,7 @@ fun MenuApp(modifier: Modifier = Modifier) {
 
     if (menuItemsList.isEmpty()) {
         for (i in 0 until names.size){
-            /*
-            * I wanted to save the images for the items in a String array along with the other info
-            * We didn't learn how to transform a string into a drawable, so I did some external research
-            * I used these sources:
-            * https://stackoverflow.com/questions/21856260/how-can-i-convert-string-to-drawable
-            * https://stackoverflow.com/questions/70062705/how-can-i-get-drawable-resource-by-string
-            * */
+            //  Sources used to figure out this code are cited in the README.md
             val img = LocalContext.current.resources.getIdentifier(
                 images[i], "drawable", LocalContext.current.packageName
             )
@@ -345,6 +339,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
 
 }
 
+// Most of this code is not my own, I credit the source in my README.md
 fun transformToJsonFormat(menuItems: List<MenuItem>): String
 {
     val gson = Gson()
@@ -360,6 +355,7 @@ fun transformToJsonFormat(menuItems: List<MenuItem>): String
     return jsonString
 }
 
+// This code is not my own, I credit the source in my README.md
 fun generateQRCode(inputStr: String, codeWidth: Int, codeHeight: Int): Bitmap? {
     try{
         val barcodeEncoder = BarcodeEncoder()
@@ -378,13 +374,3 @@ fun GreetingPreview() {
         MenuApp()
     }
 }
-
-/*
-* Menu item images attributions
-* Bouillabaisse: https://www.vecteezy.com/vector-art/56659289-a-tropical-shrimp-delight(Ai Graphic from Vecteezy)
-* Boeuf Bourguignon: https://www.vecteezy.com/vector-art/50049543-delicious-beef-bourguignon-stew-with-wine-carrots-and-onion-garnished-with-parsley-creative-banner (Maksym Boiko from Vecteezy)
-* Coq au Vin: https://www.vecteezy.com/vector-art/17406545-yeyuk-bokeum-korean-food (Luz Eugenia Velasquez from Vecteezy)
-* Ratatouille: https://www.vecteezy.com/vector-art/47299077-ratatouille-illustration-design (Fitri Handayani from Vecteezy)
-* Cassoulet: https://www.vecteezy.com/vector-art/51581418-a-bowl-of-curry-with-vegetables-and-herbs-on-a-plate (H M Shamim Al Razi From Vecteezy)
-* Crème Brûlée: https://www.vecteezy.com/vector-art/69742509-caramel-flan-a-delightful-dessert-experience (Nihal Khan from Vecteezy)
-*/
