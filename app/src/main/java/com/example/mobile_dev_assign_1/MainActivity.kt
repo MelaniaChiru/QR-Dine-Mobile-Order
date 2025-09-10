@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,7 +77,7 @@ fun MenuApp(modifier: Modifier = Modifier) {
     val prices = stringArrayResource(R.array.menu_prices)
     val images = stringArrayResource(R.array.menu_images)
 
-    val menuItemsList = remember { mutableStateListOf<MenuItem>() }
+    val menuItemsList = rememberSaveable { mutableStateListOf<MenuItem>() }
 
     if (menuItemsList.isEmpty()) {
         for (i in 0 until names.size){
@@ -93,8 +94,8 @@ fun MenuApp(modifier: Modifier = Modifier) {
             menuItemsList.add(MenuItem(names[i], descriptions[i], prices[i].toDouble(), img))
         }
     }
-    var totalQty by remember { mutableIntStateOf(0) }
-    var subTotal by remember { mutableDoubleStateOf(0.00) }
+    var totalQty by rememberSaveable { mutableIntStateOf(0) }
+    var subTotal by rememberSaveable { mutableDoubleStateOf(0.00) }
 
     fun updateTotals() {
         totalQty = 0
@@ -286,7 +287,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
     val qst = total * 0.09975
     val totalWithTax = total + gst + qst
 
-    var qrCodeBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var qrCodeBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
 
     Column (
         verticalArrangement = Arrangement.spacedBy(25.dp),
