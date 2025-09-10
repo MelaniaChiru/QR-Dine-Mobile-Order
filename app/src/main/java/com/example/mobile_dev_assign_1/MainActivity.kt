@@ -71,51 +71,26 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MenuApp(modifier: Modifier = Modifier) {
-    val names = stringArrayResource(R.array.menu_names)
-    val descriptions = stringArrayResource(R.array.menu_descriptions)
-    val prices = stringArrayResource(R.array.menu_prices)
-    val images = stringArrayResource(R.array.menu_images)
-
     val menuItemsList = rememberSaveable { mutableStateListOf<MenuItem>() }
 
     if (menuItemsList.isEmpty()) {
-        for (i in 0 until names.size){
-            //  Sources used to figure out this code are cited in the README.md
-            val img = LocalContext.current.resources.getIdentifier(
-                images[i], "drawable", LocalContext.current.packageName
-            )
-            menuItemsList.add(MenuItem(names[i], descriptions[i], prices[i].toDouble(), img))
+        val fetchedMenuItems = getMenuItems()
+        for (i in 0 until fetchedMenuItems.size) {
+            menuItemsList.add(fetchedMenuItems[i])
         }
     }
     var totalQty by rememberSaveable { mutableIntStateOf(0) }
     var subTotal by rememberSaveable { mutableDoubleStateOf(0.00) }
 
-    fun updateTotals() {
-        totalQty = 0
-        subTotal = 0.0
-        for (item in menuItemsList) {
-            totalQty += item.quantity.value
-            subTotal += item.quantity.value * item.price
-        }
-    }
-
     Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF7FBFE))
-            .padding(35.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(25.dp)
-
+        modifier = Modifier.fillMaxSize().background(Color(0xFFF7FBFE)).padding(35.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(25.dp)
     ){
         Header(
             totalQty = totalQty,
             onClearCartClick = {
                 // Clear all quantities
-                for (item in menuItemsList) {
-                    item.quantity.value = 0
-                }
-                updateTotals()
+                for (item in menuItemsList) { item.quantity.value = 0 }
+                updateTotals(menuItemsList, { totalQty = it }, { subTotal = it })
             },
             modifier = modifier
         )
@@ -123,11 +98,42 @@ fun MenuApp(modifier: Modifier = Modifier) {
             items = menuItemsList,
             onQuantityChange = { index, newQty ->
                 menuItemsList[index].quantity.value = newQty
-                updateTotals()
+                updateTotals(menuItemsList, { totalQty = it }, { subTotal = it })
             }
         )
         CheckoutSection(menuItemsList = menuItemsList, total = subTotal)
     }
+}
+
+fun updateTotals(menuItems: List<MenuItem>, setQty: (Int) -> Unit, setSubtotal: (Double) -> Unit) {
+    var qty = 0
+    var subtotal = 0.0
+
+    for (item in menuItems) {
+        qty += item.quantity.value
+        subtotal += item.quantity.value * item.price
+    }
+
+    setQty(qty)
+    setSubtotal(subtotal)
+}
+
+@Composable
+fun getMenuItems(): List<MenuItem> {
+    val names = stringArrayResource(R.array.menu_names)
+    val descriptions = stringArrayResource(R.array.menu_descriptions)
+    val prices = stringArrayResource(R.array.menu_prices)
+    val images = stringArrayResource(R.array.menu_images)
+
+    val menuItems = mutableListOf<MenuItem>()
+    for (i in 0 until names.size) {
+        val img = LocalContext.current.resources.getIdentifier(
+            images[i], "drawable", LocalContext.current.packageName
+        )
+        menuItems.add(MenuItem(names[i], descriptions[i], prices[i].toDouble(), img))
+    }
+
+    return menuItems
 }
 
 @Composable
