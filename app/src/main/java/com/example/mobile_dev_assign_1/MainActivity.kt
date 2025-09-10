@@ -334,7 +334,10 @@ fun transformToJsonFormat(menuItems: List<MenuItem>): String
     var orderItemsList = mutableListOf<OrderItem>()
 
     menuItems.forEach { item ->
-        orderItemsList.add(OrderItem(item.name, item.description, item.price, item.quantity.value))
+        if (item.quantity.value > 0)
+        {
+            orderItemsList.add(OrderItem(item.name, item.description, item.price, item.quantity.value))
+        }
     }
     val jsonString = gson.toJson(orderItemsList)
     return jsonString
