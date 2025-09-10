@@ -3,6 +3,27 @@
 ## Description
 A restaurant app where users add menu items to their cart; When they are ready to order, all they have to do is click a button, and their order is transformed into JSON format and displayed as a QR code for the server to scan.
 
+## Preview
+![2 items in cart (top part of app)](previews/image.jpg)
+![2 items in cart (before qr code displayed)](previews/image2.jpg)
+![2 items in cart (after qr code displayed)](previews/image3.jpg)
+![0 items in cart ('place order' clicked)](previews/image4.jpg)
+
+## Setup instructions
+_This is assuming Android Studio is being used_
+1. Clone or Fork the Repository
+2. Open the cloned folder in Android Studio
+3. Wait for the Gradle to sync (may take a few minutes)
+4. Configure SDK
+   - The project was built with **Android SDK API 26**
+   - Make sure you have API 26 (Android 8.0 – Oreo) installed in the SDK Manager.
+   - Your emulator or device can use a newer version, but the minimum SDK should be API 26
+5. Run the App
+You can either:
+  - Set up an emulator (minimum API 26) and run the MainActivity.kt project
+  - Connect to a physical _Android_ device using wifi
+  -  - Connect to a physical _Android_ device using a usb cable and developer more enabled
+
 ## Design Choices
 
 ### Data Classes
@@ -47,6 +68,7 @@ Both these features use the state of the menuItemsList and the qrCodeBitmap
 * Once the user increments the quantity of an item, the message disappears, but they still have to click the 'place order' button for the QR code to show up.
 * If a QR code is displayed, and the users clears their cart, the QR code disappears.
 * If a users clicks on 'place order', but they have not added any items to their cart, the QR code is not displayed and the warning message appears.
+* However if the user selects and item, presses 'place order', and then adds another item, the previous qr code will not be regenerated until 'place order' button is clicked again.
 
 ## External Code and Images Attributions
 
