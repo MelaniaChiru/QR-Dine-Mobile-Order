@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -297,6 +296,10 @@ fun DisplayOrderWarningMessage(){
 
 @Composable
 fun DisplayQrCode( qrCodeBitmap: Bitmap?){
+    /**
+     * I've added a column here because I want my image to be centred horizontally
+     * and it can only do so if it's in a column.
+     */
     Column(verticalArrangement = Arrangement.spacedBy(25.dp), modifier = Modifier.fillMaxWidth()) {
         Image(
             qrCodeBitmap!!.asImageBitmap(),
