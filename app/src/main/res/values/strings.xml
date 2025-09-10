@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">mobile-dev-assign-1</string>
+    <string name="n_items">Nº items: %1$s</string>
+    <string name="clear_cart">Clear Cart</string>
+    <string name="scroll_down_for_checkout">Scroll down for checkout</string>
+    <string name="menu_item_name_price">%1$s - %2$s$</string>
+    <string name="gst_5">GST(5%): $</string>
+    <string name="qst_9_975">QST(9.975%): $</string>
+    <string name="total_tax_included">Total (Tax Included): $</string>
+    <string name="place_order">Place Order</string>
 
     <string-array name="menu_names">
         <item>Bouillabaisse</item>

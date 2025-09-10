@@ -50,6 +50,7 @@ import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 
 
 class MainActivity : ComponentActivity() {
@@ -161,7 +162,7 @@ fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () ->
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Nº items: $totalQty"
+                    text = stringResource(R.string.n_items, totalQty)
                 )
 
                 Spacer(
@@ -169,12 +170,12 @@ fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () ->
                 )
 
                 Button(onClick = {onClearCartClick() } ) {
-                    Text(text = "Clear Cart")
+                    Text(text = stringResource(R.string.clear_cart))
                 }
             }
         }
         Text(
-            text = "Scroll down for checkout",
+            text = stringResource(R.string.scroll_down_for_checkout),
             color = Color(0xFF919191),
             fontStyle = FontStyle.Italic,
             modifier = Modifier
@@ -240,7 +241,7 @@ fun MenuItemInfo(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val formattedPrice = "%.2f".format(price)
-        Text(text = "$name - $formattedPrice$")
+        Text(text = stringResource(R.string.menu_item_name_price, name, formattedPrice))
         Text(
             text = description,
             color = Color(0xFF6A8ED1),
@@ -296,9 +297,9 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Total: $" + "%.2f".format(total), fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text("GST(5%): $" + "%.2f".format(gst))
-            Text("QST(9.975%): $" + "%.2f".format(qst))
-            Text("Total (Tax Included): $" + "%.2f".format(totalWithTax), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.gst_5) + "%.2f".format(gst))
+            Text(stringResource(R.string.qst_9_975) + "%.2f".format(qst))
+            Text(stringResource(R.string.total_tax_included) + "%.2f".format(totalWithTax), fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             if (qrCodeBitmap != null)
             {
@@ -319,7 +320,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
                 },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(text = "Place Order", textAlign = TextAlign.Center)
+            Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
         }
     }
 
