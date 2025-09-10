@@ -1,7 +1,6 @@
 package com.example.mobile_dev_assign_1
 
 import android.graphics.Bitmap
-import com.example.mobile_dev_assign_1.MenuItem
 import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -32,7 +31,6 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
