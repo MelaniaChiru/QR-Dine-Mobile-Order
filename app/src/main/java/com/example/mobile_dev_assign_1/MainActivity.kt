@@ -321,6 +321,18 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
         }
 
+        if (qrCodeBitmap != null && orderIsEmpty)
+        {
+            Text(
+                text = stringResource(R.string.order_warning),
+                fontStyle = FontStyle.Italic,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+
+            )
+        }
+
         if (qrCodeBitmap != null && !orderIsEmpty)
         {
             Image(
