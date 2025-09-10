@@ -293,7 +293,9 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Column {
+        Column (
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(text = "Total: $" + "%.2f".format(total), fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Text("GST(5%): $" + "%.2f".format(gst))
             Text("QST(9.975%): $" + "%.2f".format(qst))
@@ -301,7 +303,11 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
 
             if (qrCodeBitmap != null)
             {
-                Image(qrCodeBitmap!!.asImageBitmap(), contentDescription = null)
+                Image(
+                    qrCodeBitmap!!.asImageBitmap(),
+                    contentDescription = null ,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
 
         }
@@ -314,7 +320,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double, modifier: Modi
                 },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(text = "Place Order",textAlign = TextAlign.Center)
+            Text(text = "Place Order", textAlign = TextAlign.Center)
         }
     }
 
