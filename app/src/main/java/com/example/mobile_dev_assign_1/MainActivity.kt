@@ -285,6 +285,14 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
     val gst = total * 0.05
     val qst = total * 0.09975
     val totalWithTax = total + gst + qst
+    var orderIsEmpty = true
+    for (item in menuItemsList) {
+        if (item.quantity.value > 0)
+        {
+            orderIsEmpty = false
+            break
+        }
+    }
 
     var qrCodeBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
 
@@ -313,7 +321,7 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
         }
 
-        if (qrCodeBitmap != null)
+        if (qrCodeBitmap != null && !orderIsEmpty)
         {
             Image(
                 qrCodeBitmap!!.asImageBitmap(),
