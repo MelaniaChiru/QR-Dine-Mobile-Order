@@ -214,7 +214,8 @@ fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit, modifier:
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
 
     )
     {
