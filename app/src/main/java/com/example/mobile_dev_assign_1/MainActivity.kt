@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -103,7 +104,6 @@ fun MenuApp(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF7FBFE))
-            .background(Color(0xFFF7FBFE))
             .padding(35.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(25.dp)
@@ -133,39 +133,23 @@ fun MenuApp(modifier: Modifier = Modifier) {
 
 @Composable
 fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () -> Unit = {}){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ){
+    Column(modifier = Modifier.fillMaxWidth()){
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(R.drawable.logo),
-                contentDescription = null,
-                Modifier.width(110.dp)
-            )
+            Image( painter = painterResource(R.drawable.logo), contentDescription = null, Modifier.width(110.dp))
 
             Spacer(modifier = Modifier.width(100.dp))
 
-            Column(
-                modifier = modifier,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(R.string.n_items, totalQty)
-                )
+            Column( modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = stringResource(R.string.n_items, totalQty))
 
-                Spacer(
-                    modifier = Modifier.height(15.dp)
-                )
+                Spacer(modifier = Modifier.height(15.dp))
 
-                Button(onClick = {onClearCartClick() } ) {
-                    Text(text = stringResource(R.string.clear_cart))
-                }
+                Button(onClick = {onClearCartClick() } ) { Text(text = stringResource(R.string.clear_cart)) }
             }
         }
         Text(
@@ -179,8 +163,6 @@ fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () ->
         )
     }
 }
-
-
 
 @Composable
 fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty: Int) -> Unit){
@@ -224,51 +206,33 @@ fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit){
 }
 
 @Composable
-fun MenuItemInfo(
-    name: String,
-    price: Double,
-    description: String,
-    quantity: Int,
-    onQuantityChange: (Int) -> Unit
-) {
+fun MenuItemInfo( name: String, price: Double, description: String, quantity: Int, onQuantityChange: (Int) -> Unit) {
     Column (
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val formattedPrice = "%.2f".format(price)
-        Text(text = stringResource(R.string.menu_item_name_price, name, formattedPrice))
-        Text(
-            text = description,
-            color = Color(0xFF6A8ED1),
-            fontStyle = FontStyle.Italic,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .width(225.dp),
-            lineHeight = 1.5.em
-            )
 
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Text(text = stringResource(R.string.menu_item_name_price, name, formattedPrice))
+        Text(text = description, color = Color(0xFF6A8ED1), fontStyle = FontStyle.Italic, fontSize = 14.sp, lineHeight = 1.5.em,
+            modifier = Modifier
+                .width(225.dp)
+            )
+        Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
                 onClick = { if (quantity > 0) onQuantityChange(quantity - 1) },
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
-            ) {
-                Text(text = "—", fontSize = 16.sp, textAlign = TextAlign.Center)
-            }
+            ) { Text(text = "—", fontSize = 16.sp, textAlign = TextAlign.Center) }
 
             Text(text = "$quantity", fontSize = 16.sp, textAlign = TextAlign.Center)
 
-            Button(
-                onClick = { if (quantity < 50) onQuantityChange(quantity + 1) },
+            Button( onClick = { if (quantity < 50) onQuantityChange(quantity + 1) },
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
-            ) {
-                Text(text = "+", fontSize = 16.sp, textAlign = TextAlign.Center)
-            }
+            ) { Text(text = "+", fontSize = 16.sp, textAlign = TextAlign.Center) }
         }
     }
 
@@ -279,21 +243,12 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
     val gst = total * 0.05
     val qst = total * 0.09975
     val totalWithTax = total + gst + qst
-    var orderIsEmpty = true
-    for (item in menuItemsList) {
-        if (item.quantity.value > 0)
-        {
-            orderIsEmpty = false
-            break
-        }
-    }
+    var orderIsEmpty = isOrderEmpty(menuItemsList)
 
     var qrCodeBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
 
     Column (
-        verticalArrangement = Arrangement.spacedBy(25.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        verticalArrangement = Arrangement.spacedBy(25.dp), modifier = Modifier.fillMaxWidth()
     ) {
         Column (
             modifier = Modifier.fillMaxWidth()
@@ -315,28 +270,40 @@ fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
             Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
         }
 
-        if (qrCodeBitmap != null && orderIsEmpty)
-        {
-            Text(
-                text = stringResource(R.string.order_warning),
-                fontStyle = FontStyle.Italic,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
-
-            )
-        }
-
-        if (qrCodeBitmap != null && !orderIsEmpty)
-        {
-            Image(
-                qrCodeBitmap!!.asImageBitmap(),
-                contentDescription = null ,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        }
+        if (qrCodeBitmap != null && orderIsEmpty) DisplayOrderWarningMessage()
+        if (qrCodeBitmap != null && !orderIsEmpty) DisplayQrCode(qrCodeBitmap)
     }
+}
 
+fun isOrderEmpty(menuItemsList: List<MenuItem>): Boolean {
+    var orderIsEmpty = true
+    for (item in menuItemsList) {
+        if (item.quantity.value > 0) orderIsEmpty = false
+    }
+    return orderIsEmpty
+}
+
+@Composable
+fun DisplayOrderWarningMessage(){
+    Text(
+        text = stringResource(R.string.order_warning),
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier
+            .fillMaxWidth(),
+        textAlign = TextAlign.Center
+
+    )
+}
+
+@Composable
+fun DisplayQrCode( qrCodeBitmap: Bitmap?){
+    Column(verticalArrangement = Arrangement.spacedBy(25.dp), modifier = Modifier.fillMaxWidth()) {
+        Image(
+            qrCodeBitmap!!.asImageBitmap(),
+            contentDescription = null ,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+    }
 }
 
 // Most of this code is not my own, I credit the source in my README.md
