@@ -1,17 +1,57 @@
 package com.example.mobile_dev_assign_1
 
+import android.graphics.Bitmap
+import androidx.compose.ui.text.font.FontStyle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.example.mobile_dev_assign_1.ui.theme.Mobiledevassign1Theme
+import com.google.gson.Gson
+import com.google.zxing.BarcodeFormat
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,8 +60,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Mobiledevassign1Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    MenuApp(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -31,17 +70,286 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun MenuApp(modifier: Modifier = Modifier) {
+    val menuItemsList = rememberSaveable { mutableStateListOf<MenuItem>() }
+
+    if (menuItemsList.isEmpty()) {
+        val fetchedMenuItems = getMenuItems()
+        for (i in 0 until fetchedMenuItems.size) {
+            menuItemsList.add(fetchedMenuItems[i])
+        }
+    }
+    var totalQty by rememberSaveable { mutableIntStateOf(0) }
+    var subTotal by rememberSaveable { mutableDoubleStateOf(0.00) }
+
+    Column (
+        modifier = Modifier.fillMaxSize().background(Color(0xFFF7FBFE)).padding(35.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(25.dp)
+    ){
+        Header(
+            totalQty = totalQty,
+            onClearCartClick = {
+                // Clear all quantities
+                for (item in menuItemsList) { item.quantity.value = 0 }
+                updateTotals(menuItemsList, { totalQty = it }, { subTotal = it })
+            },
+            modifier = modifier
+        )
+        MenuItemsList(
+            items = menuItemsList,
+            onQuantityChange = { index, newQty ->
+                menuItemsList[index].quantity.value = newQty
+                updateTotals(menuItemsList, { totalQty = it }, { subTotal = it })
+            }
+        )
+        CheckoutSection(menuItemsList = menuItemsList, total = subTotal)
+    }
+}
+
+fun updateTotals(menuItems: List<MenuItem>, setQty: (Int) -> Unit, setSubtotal: (Double) -> Unit) {
+    var qty = 0
+    var subtotal = 0.0
+
+    for (item in menuItems) {
+        qty += item.quantity.value
+        subtotal += item.quantity.value * item.price
+    }
+
+    setQty(qty)
+    setSubtotal(subtotal)
+}
+
+@Composable
+fun getMenuItems(): List<MenuItem> {
+    val names = stringArrayResource(R.array.menu_names)
+    val descriptions = stringArrayResource(R.array.menu_descriptions)
+    val prices = stringArrayResource(R.array.menu_prices)
+    val images = stringArrayResource(R.array.menu_images)
+
+    val menuItems = mutableListOf<MenuItem>()
+    for (i in 0 until names.size) {
+        val img = LocalContext.current.resources.getIdentifier(
+            images[i], "drawable", LocalContext.current.packageName
+        )
+        menuItems.add(MenuItem(names[i], descriptions[i], prices[i].toDouble(), img))
+    }
+
+    return menuItems
+}
+
+@Composable
+fun Header(totalQty: Int, modifier: Modifier = Modifier, onClearCartClick: () -> Unit = {}){
+    Column(modifier = Modifier.fillMaxWidth()){
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image( painter = painterResource(R.drawable.logo), contentDescription = null, Modifier.width(110.dp))
+
+            Spacer(modifier = Modifier.width(100.dp))
+
+            Column( modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = stringResource(R.string.n_items, totalQty))
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                Button(onClick = {onClearCartClick() } ) { Text(text = stringResource(R.string.clear_cart)) }
+            }
+        }
+        Text(
+            text = stringResource(R.string.scroll_down_for_checkout),
+            color = Color(0xFF919191),
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier
+                .fillMaxWidth(),
+            textAlign = TextAlign.Right
+
+        )
+    }
+}
+
+@Composable
+fun MenuItemsList(items: List<MenuItem>,  onQuantityChange: (index: Int, newQty: Int) -> Unit){
+    Column (
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        for (i in items.indices) {
+            MenuItemContainer(item = items[i], onQuantityChange = { newQty ->
+                onQuantityChange(i, newQty)
+            })
+        }
+    }
+}
+
+@Composable
+fun MenuItemContainer(item: MenuItem, onQuantityChange: (Int) -> Unit){
+    Row (
+        Modifier
+            .background(color = Color(0xFFC8E3F9), shape = RoundedCornerShape(8.dp))
+            .fillMaxWidth()
+            .border(
+                BorderStroke(1.dp, Color(0xFF403B34)),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+
+    )
+    {
+        MenuItemInfo(item.name, item.price, item.description, item.quantity.value, onQuantityChange = {
+            item.quantity.value = it
+            onQuantityChange(it)
+        })
+        Image(
+            painter = painterResource(id = item.image),
+            contentDescription = null,
+            Modifier.width(90.dp)
+        )
+    }
+}
+
+@Composable
+fun MenuItemInfo( name: String, price: Double, description: String, quantity: Int, onQuantityChange: (Int) -> Unit) {
+    Column (
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val formattedPrice = "%.2f".format(price)
+
+        Text(text = stringResource(R.string.menu_item_name_price, name, formattedPrice))
+        Text(text = description, color = Color(0xFF6A8ED1), fontStyle = FontStyle.Italic, fontSize = 14.sp, lineHeight = 1.5.em,
+            modifier = Modifier
+                .width(225.dp)
+            )
+        Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = { if (quantity > 0) onQuantityChange(quantity - 1) },
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+            ) { Text(text = "—", fontSize = 16.sp, textAlign = TextAlign.Center) }
+
+            Text(text = "$quantity", fontSize = 16.sp, textAlign = TextAlign.Center)
+
+            Button( onClick = { if (quantity < 50) onQuantityChange(quantity + 1) },
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+            ) { Text(text = "+", fontSize = 16.sp, textAlign = TextAlign.Center) }
+        }
+    }
+
+}
+
+@Composable
+fun CheckoutSection(menuItemsList: List<MenuItem>, total: Double){
+    val gst = total * 0.05
+    val qst = total * 0.09975
+    val totalWithTax = total + gst + qst
+    var orderIsEmpty = isOrderEmpty(menuItemsList)
+
+    var qrCodeBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
+
+    Column (
+        verticalArrangement = Arrangement.spacedBy(25.dp), modifier = Modifier.fillMaxWidth()
+    ) {
+        Column (
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Total: $" + "%.2f".format(total), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.gst_5) + "%.2f".format(gst))
+            Text(stringResource(R.string.qst_9_975) + "%.2f".format(qst))
+            Text(stringResource(R.string.total_tax_included) + "%.2f".format(totalWithTax), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Button(
+            onClick =
+                {
+                    val jsonOrder = transformToJsonFormat(menuItemsList)
+                    qrCodeBitmap = generateQRCode(jsonOrder, 512, 512)
+                },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = stringResource(R.string.place_order), textAlign = TextAlign.Center)
+        }
+
+        if (qrCodeBitmap == null && orderIsEmpty) DisplayOrderWarningMessage()
+        if (qrCodeBitmap != null && !orderIsEmpty) DisplayQrCode(qrCodeBitmap)
+    }
+}
+
+fun isOrderEmpty(menuItemsList: List<MenuItem>): Boolean {
+    var orderIsEmpty = true
+    for (item in menuItemsList) {
+        if (item.quantity.value > 0) orderIsEmpty = false
+    }
+    return orderIsEmpty
+}
+
+@Composable
+fun DisplayOrderWarningMessage(){
     Text(
-        text = "Hello $name!",
-        modifier = modifier
+        text = stringResource(R.string.order_warning),
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier
+            .fillMaxWidth(),
+        textAlign = TextAlign.Center
+
     )
 }
 
-@Preview(showBackground = true)
+@Composable
+fun DisplayQrCode( qrCodeBitmap: Bitmap?){
+    /**
+     * I've added a column here because I want my image to be centred horizontally
+     * and it can only do so if it's in a column.
+     */
+    Column(verticalArrangement = Arrangement.spacedBy(25.dp), modifier = Modifier.fillMaxWidth()) {
+        Image(
+            qrCodeBitmap!!.asImageBitmap(),
+            contentDescription = null ,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+// Most of this code is not my own, I credit the source in my README.md
+fun transformToJsonFormat(menuItems: List<MenuItem>): String
+{
+    val gson = Gson()
+    var orderItemsList = mutableListOf<OrderItem>()
+    val orderIsEmpty = isOrderEmpty(menuItems)
+
+    if (orderIsEmpty) return ""
+
+    menuItems.forEach { item ->
+        if (item.quantity.value > 0)
+        {
+            orderItemsList.add(OrderItem(item.name, item.description, item.price, item.quantity.value))
+        }
+    }
+    val jsonString = gson.toJson(orderItemsList)
+    return jsonString
+}
+
+// This code is not my own, I credit the source in my README.md
+fun generateQRCode(inputStr: String, codeWidth: Int, codeHeight: Int): Bitmap? {
+    try{
+        val barcodeEncoder = BarcodeEncoder()
+        return barcodeEncoder.encodeBitmap(inputStr, BarcodeFormat.QR_CODE, codeWidth, codeHeight)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
+}
+
+
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {
     Mobiledevassign1Theme {
-        Greeting("Android")
+        MenuApp()
     }
 }

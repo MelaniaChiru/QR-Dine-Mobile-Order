@@ -1,93 +1,92 @@
 # Mobile-Dev-Assign-1
 
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/dawson-cst-cohort-2026/511/section3/MelaniaChiru/mobile-dev-assign-1.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/dawson-cst-cohort-2026/511/section3/MelaniaChiru/mobile-dev-assign-1/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+A restaurant app where users add menu items to their cart; When they are ready to order, all they have to do is click a button, and their order is transformed into JSON format and displayed as a QR code for the server to scan.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## Preview
+![2 items in cart (top part of app)](previews/image.jpg)
+![2 items in cart (before qr code displayed)](previews/image2.jpg)
+![2 items in cart (after qr code displayed)](previews/image3.jpg)
+![0 items in cart ('place order' clicked)](previews/image4.jpg)
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Setup instructions
+_This is assuming Android Studio is being used_
+1. Clone or Fork the Repository
+2. Open the cloned folder in Android Studio
+3. Wait for the Gradle to sync (may take a few minutes)
+4. Configure SDK
+   - The project was built with **Android SDK API 26**
+   - Make sure you have API 26 (Android 8.0 – Oreo) installed in the SDK Manager.
+   - Your emulator or device can use a newer version, but the minimum SDK should be API 26
+5. Run the App
+You can either:
+  - Set up an emulator (minimum API 26) and run the MainActivity.kt project
+  - Connect to a physical _Android_ device using wifi
+  -  - Connect to a physical _Android_ device using a usb cable and developer more enabled
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Design Choices
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Data Classes
+* I use 2 data classes: MenuItem, OrderItem
+* I initially only had MenuItem, but when I got to the point where I had to encode it to JSON format, MenuItem wasn't the best. OrderItem is a simplified version of MenuItem: it does not have an image property, and the quantity property is a regular Int, not a state variable
+* Therefore, when I get to the part where I loop through the MenuItemsList, I map each MenuItem to an OrderItem.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### State Variables
+* I have a total of 4 state variables: MenuItemsList, totalQty, subTotal, and qrCodeBitmap
+* Making MenuItemsList a state variable is the most obvious of them all. I need to keep track of all the items' quantities to be able to update the total.
+* totalQty is the value displayed at the top of the screen, where it just shows users how many items they have in their cart.
+* subTotal is the total price before the taxes are calculated
+  * While these 2 variables could have been computed from MenuItemList, It was easier and more intuitive for me to make them separate from the MenuItemsList, so they could be each passed down as parameters to the composables that needed them.
+* qrCodeBitmap is also a state variable because it is updated everytime the 'place order' button is clicked. Since it only has to be displayed after the button click, it starts off with a value of null, and gets updated when the button is clicked using the generateQRCode() function and MenuItemsList.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+* After I was done with a the needed requirements, I had some time before submission, so I added some extra features.
+  * First of all, I hide the qrCode from view if a user clears their cart (because if their cart is empty, it's useless to show a qrCode of an empty array.
+  * Secondly, if a user wants to place an order, but they haven't added any items to their cart, the qr code is not displayed and a warning message stating that their cart is empty appears.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Both these features use the state of the menuItemsList and the qrCodeBitmap
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Styling / Design
+* My UI slightly differs from the once in the instructions.
+  * I wanted to show the total number of items in a user's cart, so i added that at the top of the screen next to the logo.
+  * Because of this feature, I found it more intuitive to have the 'clear cart' button underneath the number of items instead of at the bottom of the app next to the 'place order' button.
+  * I've also added images, mostly because I wanted my app to be more visually appealing.
+  
+### Custom Composables
+* **MenuApp**: The root of the project, the composable that calls on all other composables
+* **Header**: Contains logo and displays total number of items in cart (and the 'clear cart' button)
+* **MenuItemsList**: A column that contains each menu item
+* **MenuItemContainer**: A row that contains the menu item info and the image
+* **MenuItemInfo**:  Composable that displays the menu item name, price, description, and quantity (and buttons to change quantity
+* **CheckoutSection**: Composable that shows subtotal, taxes, and total. 'Place order' button and qrCode are also displayed in this composable
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Composable functions vs. regular functions
+* For the most part, my functions are composables
+* In situations where the function does some sort of logical operation and does not display anything to the screen (or need to call a composable), then it's a regular function
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### QR Code
+* When the app is initially started, the QR code is not displayed, instead there is a message stating that the cart is empty.
+* Once the user increments the quantity of an item, the message disappears, but they still have to click the 'place order' button for the QR code to show up.
+* If a QR code is displayed, and the users clears their cart, the QR code disappears.
+* If a users clicks on 'place order', but they have not added any items to their cart, the QR code is not displayed and the warning message appears.
+* However if the user selects and item, presses 'place order', and then adds another item, the previous qr code will not be regenerated until 'place order' button is clicked again.
 
-## License
-For open source projects, say how it is licensed.
+## External Code and Images Attributions
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### Images
+* Menu item images attributions
+  * Bouillabaisse: https://www.vecteezy.com/vector-art/56659289-a-tropical-shrimp-delight(Ai Graphic from Vecteezy)
+  * Boeuf Bourguignon: https://www.vecteezy.com/vector-art/50049543-delicious-beef-bourguignon-stew-with-wine-carrots-and-onion-garnished-with-parsley-creative-banner (Maksym Boiko from Vecteezy)
+  * Coq au Vin: https://www.vecteezy.com/vector-art/17406545-yeyuk-bokeum-korean-food (Luz Eugenia Velasquez from Vecteezy)
+  * Ratatouille: https://www.vecteezy.com/vector-art/47299077-ratatouille-illustration-design (Fitri Handayani from Vecteezy)
+  * Cassoulet: https://www.vecteezy.com/vector-art/51581418-a-bowl-of-curry-with-vegetables-and-herbs-on-a-plate (H M Shamim Al Razi From Vecteezy)
+  * Crème Brûlée: https://www.vecteezy.com/vector-art/69742509-caramel-flan-a-delightful-dessert-experience (Nihal Khan from Vecteezy)
+* I created the logo using Canva
+
+
+### External Code
+* Transform String Array image name to drawable:
+  * https://stackoverflow.com/questions/21856260/how-can-i-convert-string-to-drawable
+  * https://stackoverflow.com/questions/70062705/how-can-i-get-drawable-resource-by-string
+  
+* Transform Kotlin Object / Class to JSON: https://www.bezkoder.com/kotlin-parse-json-gson/#Convert_Object_to_JSON_string_in_Kotlin
+* Encrypt JSON file to QR Code: https://gitlab.com/crdavis/texttoqrcode
