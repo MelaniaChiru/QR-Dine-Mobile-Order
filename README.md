@@ -1,9 +1,19 @@
 # 🍽️ QR-Dine Mobile Order
 
-## Description
 A restaurant app where users add menu items to their cart; When they are ready to order, all they have to do is click a button, and their order is transformed into JSON format and displayed as a QR code for the server to scan.
 
-## Setup instructions
+## 🛠️ Tech Stack
+* Kotlin
+* Jetpack Compose
+
+## 🎥 Video Preview
+
+
+https://github.com/user-attachments/assets/5aceabb2-81d9-4911-82c1-bdfe47e0e731
+
+
+
+## ⚙️ Setup instructions
 _This is assuming Android Studio is being used_
 1. Clone or Fork the Repository
 2. Open the cloned folder in Android Studio
@@ -16,9 +26,9 @@ _This is assuming Android Studio is being used_
 You can either:
   - Set up an emulator (minimum API 26) and run the MainActivity.kt project
   - Connect to a physical _Android_ device using wifi
-  -  - Connect to a physical _Android_ device using a usb cable and developer more enabled
+  - Connect to a physical _Android_ device using a usb cable and developer more enabled
 
-### QR Code
+## <img width="30" height="30" alt="image-hheqtvAvZLesg9WYTVCosfDrtUtC7H" src="https://github.com/user-attachments/assets/2950cc78-669c-4102-a8b1-86eb1c82b46e" /> QR Code
 * When the app is initially started, the QR code is not displayed, instead there is a message stating that the cart is empty.
 * Once the user increments the quantity of an item, the message disappears, but they still have to click the 'place order' button for the QR code to show up.
 * If a QR code is displayed, and the users clears their cart, the QR code disappears.
