@@ -1,13 +1,7 @@
-# Mobile-Dev-Assign-1
+# 🍽️ QR-Dine Mobile Order
 
 ## Description
 A restaurant app where users add menu items to their cart; When they are ready to order, all they have to do is click a button, and their order is transformed into JSON format and displayed as a QR code for the server to scan.
-
-## Preview
-![2 items in cart (top part of app)](previews/image.jpg)
-![2 items in cart (before qr code displayed)](previews/image2.jpg)
-![2 items in cart (after qr code displayed)](previews/image3.jpg)
-![0 items in cart ('place order' clicked)](previews/image4.jpg)
 
 ## Setup instructions
 _This is assuming Android Studio is being used_
@@ -23,45 +17,6 @@ You can either:
   - Set up an emulator (minimum API 26) and run the MainActivity.kt project
   - Connect to a physical _Android_ device using wifi
   -  - Connect to a physical _Android_ device using a usb cable and developer more enabled
-
-## Design Choices
-
-### Data Classes
-* I use 2 data classes: MenuItem, OrderItem
-* I initially only had MenuItem, but when I got to the point where I had to encode it to JSON format, MenuItem wasn't the best. OrderItem is a simplified version of MenuItem: it does not have an image property, and the quantity property is a regular Int, not a state variable
-* Therefore, when I get to the part where I loop through the MenuItemsList, I map each MenuItem to an OrderItem.
-
-### State Variables
-* I have a total of 4 state variables: MenuItemsList, totalQty, subTotal, and qrCodeBitmap
-* Making MenuItemsList a state variable is the most obvious of them all. I need to keep track of all the items' quantities to be able to update the total.
-* totalQty is the value displayed at the top of the screen, where it just shows users how many items they have in their cart.
-* subTotal is the total price before the taxes are calculated
-  * While these 2 variables could have been computed from MenuItemList, It was easier and more intuitive for me to make them separate from the MenuItemsList, so they could be each passed down as parameters to the composables that needed them.
-* qrCodeBitmap is also a state variable because it is updated everytime the 'place order' button is clicked. Since it only has to be displayed after the button click, it starts off with a value of null, and gets updated when the button is clicked using the generateQRCode() function and MenuItemsList.
-
-* After I was done with a the needed requirements, I had some time before submission, so I added some extra features.
-  * First of all, I hide the qrCode from view if a user clears their cart (because if their cart is empty, it's useless to show a qrCode of an empty array.
-  * Secondly, if a user wants to place an order, but they haven't added any items to their cart, the qr code is not displayed and a warning message stating that their cart is empty appears.
-
-Both these features use the state of the menuItemsList and the qrCodeBitmap
-
-### Styling / Design
-* My UI slightly differs from the once in the instructions.
-  * I wanted to show the total number of items in a user's cart, so i added that at the top of the screen next to the logo.
-  * Because of this feature, I found it more intuitive to have the 'clear cart' button underneath the number of items instead of at the bottom of the app next to the 'place order' button.
-  * I've also added images, mostly because I wanted my app to be more visually appealing.
-  
-### Custom Composables
-* **MenuApp**: The root of the project, the composable that calls on all other composables
-* **Header**: Contains logo and displays total number of items in cart (and the 'clear cart' button)
-* **MenuItemsList**: A column that contains each menu item
-* **MenuItemContainer**: A row that contains the menu item info and the image
-* **MenuItemInfo**:  Composable that displays the menu item name, price, description, and quantity (and buttons to change quantity
-* **CheckoutSection**: Composable that shows subtotal, taxes, and total. 'Place order' button and qrCode are also displayed in this composable
-
-### Composable functions vs. regular functions
-* For the most part, my functions are composables
-* In situations where the function does some sort of logical operation and does not display anything to the screen (or need to call a composable), then it's a regular function
 
 ### QR Code
 * When the app is initially started, the QR code is not displayed, instead there is a message stating that the cart is empty.
